@@ -58,7 +58,7 @@ def elf_with_most_calories():
 
 def rock_paper_scissors_score():
     '''
-
+    Calculate the rock paper scissors scores from day 2.
     :return:
     '''
 
@@ -98,4 +98,52 @@ def rock_paper_scissors_score():
     print(your_score)
 
 
-rock_paper_scissors_score()
+def rucksack_organisation():
+    '''
+    Read the lists of what is in the rucksacks.
+    :return:
+    '''
+
+    # Get the rucksack contents.
+    rucksacks_path = os.getcwd() + '\input_day3.txt'
+    rucksacks = text_file_to_lines(rucksacks_path)
+
+    priority = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    sum_of_priorities = 0
+
+    # Find the matching thing in both compartments of each rucksack
+    for rucksack in rucksacks:
+
+        # Print what is in both compartments.
+        total_num_items = len(rucksack)
+        first_compartment, second_compartment = split_list(rucksack, int(total_num_items/2))
+
+        # Get the matches in both compartments
+        matches = set(first_compartment) & set(second_compartment)
+
+        for match in matches:
+            # Find returns where in the list the letter was
+            where_found = priority.find(match) + 1
+            sum_of_priorities += where_found
+
+    print(sum_of_priorities)
+    sum_of_priorities = 0
+
+    for index in range(int(len(rucksacks)/3)):
+        current_position = (index+1)*3
+
+        rucksack_1 = rucksacks[current_position-3]
+        rucksack_2 = rucksacks[current_position-2]
+        rucksack_3 = rucksacks[current_position-1]
+
+        matches = set(rucksack_1) & set(rucksack_2) & set(rucksack_3)
+
+        for match in matches:
+            where_found = priority.find(match) + 1
+            sum_of_priorities += where_found
+
+    print(sum_of_priorities)
+
+
+
+rucksack_organisation()

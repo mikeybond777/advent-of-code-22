@@ -1,3 +1,10 @@
+def split_list(list, index):
+    '''
+    Split a list in two based on the index provided.
+    '''
+
+    return list[:index], list[index:]
+
 def calculate_rock_paper_scissors_score(p2_choice, outcome):
     '''
     Calculates the score from a game.
