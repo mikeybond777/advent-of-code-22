@@ -7,6 +7,7 @@ def elf_with_most_calories():
     :return:
     '''
 
+    # Get each line from the input document of calories.
     calories_path = os.getcwd() + '\input.txt'
     lines = text_file_to_lines(calories_path)
 
@@ -21,7 +22,7 @@ def elf_with_most_calories():
         elf_calorie_dict['elf' + str(current_index+1)] = []
         elf_calorie_total_dict['elf' + str(current_index+1)] = 0
 
-    # Reset the current index
+    # Reset the current index.
     current_index = 0
 
     # Sort list into a dictionary of elves and lists of number of calories they are carrying
@@ -34,6 +35,7 @@ def elf_with_most_calories():
             elf_calorie_total_dict['elf' + str(elf_count)] += int(current_item)
         current_index += 1
 
+    # Print the total largest group of calories.
     print(max(elf_calorie_total_dict.values()))
 
     # Variable required for top 3 elves calculation
@@ -59,9 +61,41 @@ def rock_paper_scissors_score():
 
     :return:
     '''
+
+    # Get the strategy guide with the list of actions.
     strategy_guide_path = os.getcwd() + '\input_day2.txt'
     lines = text_file_to_lines(strategy_guide_path)
 
-    print(lines)
+    translate_opponent = {'A':'ROCK', 'B':'PAPER', 'C':'SCISSORS'}
+    translate_yourself = {'X':'ROCK', 'Y':'PAPER', 'Z':'SCISSORS'}
+
+    your_score = 0
+
+    # The game score when we read the columns as player 1 and player 2.
+    for game in lines:
+        p1_choice = translate_opponent[game[0]]
+        p2_choice = translate_yourself[game[2]]
+
+        outcome = rock_paper_scissors(p1_choice, p2_choice)
+        your_score += calculate_rock_paper_scissors_score(p2_choice, outcome)
+        print(1, game, p1_choice, p2_choice, outcome, calculate_rock_paper_scissors_score(p2_choice, outcome))
+
+    print(your_score)
+
+    # New translation dictionary and reset score.
+    translate_outcome = {'X':'PLAYER1', 'Y':'DRAW', 'Z':'PLAYER2'}
+    your_score = 0
+
+    # The game score when we read the columns as player 1 and outcome.
+    for game in lines:
+        p1_choice = translate_opponent[game[0]]
+        outcome = translate_outcome[game[2]]
+
+        p2_choice = calculate_p2_choice(p1_choice, outcome)
+        your_score += calculate_rock_paper_scissors_score(p2_choice, outcome)
+        print(2, game, p1_choice, p2_choice, outcome, calculate_rock_paper_scissors_score(p2_choice, outcome))
+
+    print(your_score)
+
 
 rock_paper_scissors_score()

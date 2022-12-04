@@ -1,4 +1,36 @@
+def calculate_rock_paper_scissors_score(p2_choice, outcome):
+    '''
+    Calculates the score from a game.
+    :param p2_choice: Player 2 choice.
+    :param outcome: Game outcome.
+    :return:
+    '''
+
+    round_score = 0
+
+    # Add score for the choice
+    if p2_choice == 'ROCK':
+        round_score += 1
+    elif p2_choice == 'PAPER':
+        round_score += 2
+    elif p2_choice == 'SCISSORS':
+        round_score += 3
+
+    # Add score for the outcome
+    if outcome == 'DRAW':
+        round_score += 3
+    elif outcome == 'PLAYER1':
+        round_score += 0
+    elif outcome == 'PLAYER2':
+        round_score += 6
+
+    return round_score
+
+
 def rock_paper_scissors(p1_choice, p2_choice):
+    '''
+    Return the outcome of the game based on the choice of the two players.
+    '''
 
     if p1_choice == p2_choice:
         return 'DRAW'
@@ -18,6 +50,37 @@ def rock_paper_scissors(p1_choice, p2_choice):
         else:
             return 'PLAYER2'
 
+def calculate_p2_choice(p1_choice, outcome):
+    '''
+    Calculate the player 2 choice from player 1 and the outcome (winner).
+    '''
+
+    if outcome == 'DRAW':
+        return p1_choice
+    if outcome == 'PLAYER2':
+        if p1_choice == 'ROCK':
+            return 'PAPER'
+        if p1_choice == 'PAPER':
+            return 'SCISSORS'
+        if p1_choice == 'SCISSORS':
+            return 'ROCK'
+    if outcome == 'PLAYER1':
+        if p1_choice == 'ROCK':
+            return 'SCISSORS'
+        if p1_choice == 'PAPER':
+            return 'ROCK'
+        if p1_choice == 'SCISSORS':
+            return 'PAPER'
+
+
+def swap_dict_keys_values(dictionary):
+    '''
+    Swap the values and keys in the dictionary (only works when there is one value per key.)
+    :param dictionary: The dictionary to swap round.
+    :return:
+    '''
+
+    return dict([(value, key) for key, value in dictionary.items()])
 
 def text_file_to_lines(path):
     lines = []
