@@ -144,6 +144,41 @@ def rucksack_organisation():
 
     print(sum_of_priorities)
 
+def camp_cleanup():
+    '''
+    Compares the pairs of ranges to see whether one is contained in another or or if there is any overlap.
+    :return:
+    '''
 
+    # Get ID inputs
 
-rucksack_organisation()
+    ids_path = os.getcwd() + '\input_day4.txt'
+    lines = text_file_to_lines(ids_path)
+
+    # The number of pairs in another
+    pair_in_another_count = 0
+    pair_overlaps_count = 0
+
+    for line in lines:
+        # Each line formatted like 4-4,5-6 so split to get each side
+        elf_pair = line.split(',')
+
+        # Convert each elf pair into a list
+        elf1_range = range_to_list(elf_pair[0])
+        elf2_range = range_to_list(elf_pair[1])
+
+        #print(elf1_range, elf2_range)
+
+        if compare_lists(elf1_range, elf2_range) == True or compare_lists(elf2_range, elf1_range):
+            pair_in_another_count += 1
+
+        matches = set(elf1_range) & set(elf2_range)
+        if len(matches) > 0:
+            pair_overlaps_count += 1
+
+    print(pair_in_another_count)
+    print(pair_overlaps_count)
+
+def supply_stacks():
+
+camp_cleanup()

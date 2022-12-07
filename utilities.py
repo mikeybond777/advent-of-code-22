@@ -1,3 +1,28 @@
+def compare_lists(A, B):
+    n = len(A)
+    return any(A == B[i:i + n] for i in range(len(B)-n + 1))
+
+
+def range_to_list(str_range):
+    '''
+    Converts a range of 4-7 into list [4,5,6,7] for example
+    :return:
+    '''
+
+    list = []
+
+    nums = str_range.split('-')
+
+    first_num = int(nums[0])
+    second_num = int(nums[1])
+
+    for num in range(first_num, second_num+1, 1):
+        list.append(num)
+
+    return list
+
+
+
 def split_list(list, index):
     '''
     Split a list in two based on the index provided.
