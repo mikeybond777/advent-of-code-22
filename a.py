@@ -1,5 +1,6 @@
 from utilities import *
 import os
+import numpy as np
 
 def elf_with_most_calories():
     '''
@@ -180,5 +181,236 @@ def camp_cleanup():
     print(pair_overlaps_count)
 
 def supply_stacks():
+    '''
+    Move stacks based on the instructions in the puzzle input (day 5)
+    :return:
+    '''
 
-camp_cleanup()
+    stacks_path = os.getcwd() + '\input_day5.txt'
+    lines = text_file_to_lines(stacks_path)
+
+    # Sort the stacks into lists.
+    # 9 is the number for the first bit.
+
+    crate_lists = [[], [], [], [], [], [], [], [], []]
+
+    # For each line at top
+    for index in range(8):
+        line = lines[8-index-1]
+        print(line)
+        index_3 = 0
+
+        # Get each letter and position for each line.
+        for index_2 in range(1, len(line), 4):
+            current_letter = line[index_2]
+            if current_letter != ' ':
+                crate_lists[index_3].append(current_letter)
+            index_3 += 1
+
+    # Crate lists should be full and ready to go.
+    print(crate_lists)
+
+    # Carry out the instructions.
+    for index in range(10, len(lines)):
+        line = lines[index]
+        print(line)
+
+        # Format the instructions
+        line_split = line.split(' ')
+        num_to_move = int(line_split[1])
+        place_to_move_from = int(line_split[3])-1
+        place_to_move_to = int(line_split[5])-1
+
+        crate_column = crate_lists[place_to_move_from]
+        new_crate_column, crates_to_move = split_list(crate_column, len(crate_column)-num_to_move)
+
+        # Reverse the crates to move (hide this line to get the second part)
+        crates_to_move = list(reversed(crates_to_move))
+
+        # Update the new columns
+        crate_lists[place_to_move_from] = new_crate_column
+        crate_lists[place_to_move_to] += crates_to_move
+
+        print(crate_lists)
+
+    # Get the last thing in each stack.
+    final_crates = ''
+
+    for stack in crate_lists:
+
+        final_crate = stack[-1]
+        final_crates += final_crate
+
+    print(final_crates)
+
+def tuning_trouble():
+    '''
+    Finds the first 4 unique characters.
+    :return:
+    '''
+
+    tuning_stack_path = os.getcwd() + '\input_day6.txt'
+    lines = text_file_to_lines(tuning_stack_path)
+
+    # Get the string of unique characters and the index of where those unique characters start.
+    characters, index = unique_string(lines[0], 4)
+
+    print(characters, index)
+
+def no_space_left_on_device():
+    '''
+    Navigate directories to find the total sum. Day 7
+    :return:
+    '''
+
+    searching_dirs = os.getcwd() + '\input_day7.txt'
+    lines = text_file_to_lines(searching_dirs)
+
+    # Path containing the current directory
+    current_dir = ''
+    # Dictionary containing all directories with the size.
+    directory_sizes_dict = {}
+    # Total data being used on the harddrive.
+    total_size_used = 0
+
+    for index in range(len(lines)):
+        print(current_dir)
+
+        line = lines[index]
+        line_split = line.split(' ')
+
+        # If the next line is a cd change the current directory to something else.
+        if line.find('cd ') != -1:
+            dir_to_change = line_split[-1]
+
+            if dir_to_change == '..':
+                current_dir = get_above_directory(current_dir)
+            else:
+                if dir_to_change != '/':
+                    if current_dir != '/':
+                        current_dir += '/' + dir_to_change
+                    else:
+                        current_dir += dir_to_change
+                else:
+                    current_dir = '/'
+
+        elif line_split[0].isnumeric():
+
+            data_to_add = int(line_split[0])
+            total_size_used += data_to_add
+
+            # Create a new directory entry with the size of the directory if it does not exist already, else add.
+            if current_dir not in directory_sizes_dict.keys():
+                directory_sizes_dict[current_dir] = data_to_add
+            else:
+                directory_sizes_dict[current_dir] += data_to_add
+
+            # Make sure to also go back through the path to add the data size to upper directories too
+            current_temp_dir = current_dir
+
+            for index_2 in range(len(current_dir.split('/'))):
+                current_temp_dir = get_above_directory(current_temp_dir)
+
+                if current_temp_dir not in list((directory_sizes_dict.keys())):
+                    directory_sizes_dict[current_temp_dir] = data_to_add
+                else:
+                    directory_sizes_dict[current_temp_dir] += data_to_add
+
+    # Get the total data for entries less than 100000
+    total_data = 0
+
+    for entry in list(directory_sizes_dict.keys()):
+        dir_data = directory_sizes_dict[entry]
+
+        if dir_data <= 100000:
+            total_data += dir_data
+
+    print(directory_sizes_dict)
+    print(total_data)
+
+    #PART2
+
+    # Find the smallest directory that is bigger than to 30000000
+    directory_sizes = list(directory_sizes_dict.values())
+
+    # Get the total size being occupied atm.
+
+    # Work out how much space we'll need
+    total_size_free = 70000000 - total_size_used
+    space_required = 30000000 - total_size_free
+
+    print(space_required, 'SPACE')
+
+    # Find directories we can delete that will give us this space.
+    directory_sizes_filtered = []
+
+    for directory_size in directory_sizes:
+        if directory_size >= space_required:
+            directory_sizes_filtered.append(directory_size)
+
+    print(directory_sizes_filtered)
+    print(min(directory_sizes_filtered))
+
+
+def treetop_tree_house():
+    '''
+    Find the number of trees visible in the grid.
+    :return:
+    '''
+
+    tree_heights = os.getcwd() + '\input_day8.txt'
+    lines = text_file_to_lines(tree_heights)
+
+    # Initialize a numpy array
+    row_lists = []
+
+    for index in range(len(lines)):
+        row = lines[index]
+        row_list = [x for x in row]
+        row_lists.append(row_list)
+
+    grid_array = np.array(row_lists, dtype='i')
+
+    # Get the size of the grid
+    num_columns, num_rows = grid_array.shape
+    visible_trees_dict = {}
+    tree_scenic_scores = []
+
+    # Iterate through every value
+    for index_2 in range(num_rows):
+        for index_3 in range(num_columns):
+
+            tree_coordinates = (index_3, index_2)
+            tree_height = grid_array[index_2, index_3]
+
+            # If we are on the edge of the grid add the coordinates
+            if tree_coordinates[0] == 0 or tree_coordinates[0] == num_columns - 1 or tree_coordinates[1] == 0 \
+                or tree_coordinates[1] == num_rows - 1:
+                visible_trees_dict[tree_coordinates] = tree_height
+                continue
+
+            # Get the current tree height and all values in the row
+            current_row = grid_array[index_2]
+
+            # Get lists of each side of the current tree
+            trees_left = current_row[0:tree_coordinates[0]]
+            trees_right = current_row[tree_coordinates[0]+1:]
+            trees_above = grid_array[0:tree_coordinates[1], tree_coordinates[0]]
+            trees_below = grid_array[tree_coordinates[1]+1:, tree_coordinates[0]]
+
+            tree_scenic_score = (where_found_max(tree_height, np.flip(trees_left)) + 1) * \
+                                (where_found_max(tree_height, trees_right) + 1) * \
+                                (where_found_max(tree_height, np.flip(trees_above)) + 1) * \
+                                (where_found_max(tree_height, trees_below) + 1)
+
+            tree_scenic_scores.append(tree_scenic_score)
+
+            # Check each direction to see if obstructed
+            if tree_height > max(trees_left) or tree_height > max(trees_right) or tree_height > max(trees_above) \
+                    or tree_height > max(trees_below):
+                visible_trees_dict[tree_coordinates] = tree_height
+
+    print(len(visible_trees_dict.keys()))
+    print(max(tree_scenic_scores))
+
+treetop_tree_house()

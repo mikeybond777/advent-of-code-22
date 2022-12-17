@@ -1,3 +1,78 @@
+def where_found_max(num, array):
+    '''
+    Returns the first index in the array where the num is not greater than list element.
+    '''
+
+    for index in range(len(array)):
+        num_to_compare = array[index]
+
+        if not num > num_to_compare:
+            return index
+
+    return len(array) - 1
+
+def trim_last_char(string):
+    '''
+    Trim the last character in the string and return the new string.
+    '''
+
+    new_string = ''
+
+    for i in range(len(string) - 1):
+        new_string += string[i]
+
+    return new_string
+
+def get_above_directory(path):
+    '''
+    Takes a path and returns the string with the directory above (path should be in '/' form and not end with '/'.
+    '''
+
+    split_path = path.split('/')
+    new_path = '/'
+
+    for index in range(len(split_path) -2):
+        new_path += split_path[index+1] + '/'
+
+    # Trim off the last '/'
+    new_path = trim_last_char(new_path)
+
+    if new_path == '':
+        new_path = '/'
+
+    return new_path
+
+
+def unique_string(string, num):
+    '''
+    Returns first num unique characters in the string provided and where this string starts.
+    '''
+
+    print(string, num)
+
+    for index in range(num, len(string), 1):
+
+        string_to_analyse = string[index-num:index]
+        length_string = len(string_to_analyse)
+        continue_loop = False
+
+        # Search each character in the string (starting at the end), if the index where it is found is not where we
+        # expect, then there is more than one and we should continue searching.
+        for index_2 in range(length_string):
+            index_3 = length_string-index_2-1
+            character = string_to_analyse[index_3]
+            if string_to_analyse.find(character) != index_3:
+                continue_loop = True
+                break
+
+        if continue_loop:
+            continue
+        else:
+            return string_to_analyse, index
+
+    return None
+
+
 def compare_lists(A, B):
     n = len(A)
     return any(A == B[i:i + n] for i in range(len(B)-n + 1))
@@ -20,8 +95,6 @@ def range_to_list(str_range):
         list.append(num)
 
     return list
-
-
 
 def split_list(list, index):
     '''
