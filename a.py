@@ -413,4 +413,147 @@ def treetop_tree_house():
     print(len(visible_trees_dict.keys()))
     print(max(tree_scenic_scores))
 
-treetop_tree_house()
+def update_pos(coordinates, direction):
+    '''
+    Used by day 9 to update the position based on an input.
+    :return:
+    '''
+
+    if direction == 'U':
+        coordinates[1] += 1
+    elif direction == 'D':
+        coordinates[1] -= 1
+    elif direction == 'L':
+        coordinates[0] -= 1
+    elif direction == 'R':
+        coordinates[0] += 1
+
+    return coordinates
+
+def calc_tail(head_pos, tail_pos):
+    '''
+    Used by Day 9 part 2 to calculate the input of the tail
+    :return:
+    '''
+
+    x_diff = head_pos[0] - tail_pos[0]
+    y_diff = head_pos[1] - tail_pos[1]
+
+    # If the head is at no more than 1 position away than the tail no need to move the tail
+    if x_diff ** 2 <= 1 and y_diff ** 2 <= 1:
+        return tail_pos
+    # If x is 2 away then head in this direction
+    elif x_diff ** 2 == 4:
+        tail_pos[0] += int((x_diff / 2))
+        # Need to accomodate diagonal positions too in this function
+        if y_diff ** 2 == 4:
+            tail_pos[1] += int((y_diff / 2))
+        elif y_diff ** 2 == 1:
+            tail_pos[1] = head_pos[1]
+    # If y is 2 away then head in this direction
+    elif y_diff ** 2 == 4:
+        tail_pos[1] += int((y_diff / 2))
+        # Need to accomodate diagonal positions too in this function
+        if x_diff ** 2 == 4:
+            tail_pos[0] += int((x_diff / 2))
+        elif x_diff ** 2:
+            tail_pos[0] = head_pos[0]
+
+    return tail_pos
+
+def rope_bridge():
+    '''
+    Day 9 - find the places where the tail of a rope has been when the head has been moving about.
+    '''
+
+    move_instructions = os.getcwd() + '\input_day9.txt'
+    lines = text_file_to_lines(move_instructions)
+
+    # PART 1
+
+    head_pos = [0, 0]
+    tail_pos = [0, 0]
+
+    # List of tuples containing everywhere the tail has been
+    tail_positions = []
+    tail_positions.append(tuple(tail_pos))
+
+    for line in lines:
+
+        # Split the line to get the full instruction
+        line_split = line.split(' ')
+        direction = line_split[0]
+        number = int(line_split[1])
+
+        for execution in range(number):
+
+            head_pos = update_pos(head_pos, direction)
+
+            # Now calculate position of tail
+
+            x_diff = head_pos[0] - tail_pos[0]
+            y_diff = head_pos[1] - tail_pos[1]
+
+            # If the head is at no more than 1 position away than the tail continue
+            if x_diff ** 2 <= 1 and y_diff ** 2 <= 1:
+                continue
+            # If x is 2 away then head in this direction
+            elif x_diff ** 2 == 4:
+                tail_pos[0] += int((x_diff/2))
+                # If x was 2 away and we are not in the same column then move to the same column
+                if y_diff ** 2 < 1:
+                    tail_pos[1] = head_pos[1]
+            # If y is 2 away then head in this direction
+            elif y_diff ** 2 == 4:
+                tail_pos[1] += int((y_diff/2))
+                # If y was 2 away and we are not in the same column then move to the same column
+                if x_diff ** 2 < 1:
+                    tail_pos[0] = head_pos[0]
+
+            if tuple(tail_pos) not in tail_positions:
+                tail_positions.append(tuple(tail_pos))
+
+    print(tail_positions)
+    print(len(tail_positions))
+
+    # PART 2
+    head_pos = [0, 0]
+    tails = []
+    tail_positions = [(0, 0)]
+
+    # Initialize tails
+    for index in range(9):
+        tails.append([0,0])
+
+
+    for index_2 in range(len(lines)):
+
+        line = lines[index_2]
+        # Split the line to get the full instruction
+        line_split = line.split(' ')
+        direction = line_split[0]
+        number = int(line_split[1])
+
+        for execution in range(number):
+            head_pos = update_pos(head_pos, direction)
+
+            # Update all the tails based on the head movement
+            for index_3 in range(len(tails)):
+
+                if index_3 == 0:
+                    tails[index_3] = calc_tail(head_pos, tails[index_3])
+                else:
+                    tails[index_3] = calc_tail(tails[index_3-1], tails[index_3])
+
+                # Add the final tail to the list of positions where the tail went
+                if index_3 == len(tails)-1:
+                    if tuple(tails[index_3]) not in tail_positions:
+                        tail_positions.append(tuple(tails[index_3]))
+
+    print(tail_positions)
+    print(len(tail_positions))
+
+def cathode_ray_tube():
+    '''
+    Day 10
+    '''
