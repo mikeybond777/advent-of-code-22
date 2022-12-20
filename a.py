@@ -553,7 +553,98 @@ def rope_bridge():
     print(tail_positions)
     print(len(tail_positions))
 
+def check_register_x(register_x, cycle_count, key_cycles, signal_strengths):
+    '''
+    Used by day 10. If the cycle count reaches one of the values in the key_cycles, then calculate the signal strength and append to
+    the signal strengths list which you then return
+    '''
+
+    for number in key_cycles:
+        if cycle_count == number:
+            signal_strength = cycle_count * register_x
+            signal_strengths.append(signal_strength)
+            return signal_strengths
+
+    return signal_strengths
+
+def new_cycle(crt_pos, cycle_count, register_x, key_cycles):
+    '''
+    Used by day 10 part 2. Does a lot of checks depending on the new cycle.
+    :return:
+    '''
+
+    cycle_count += 1
+    crt_pos += 1
+
+    # Check if we have reached a new line for the crt
+    for number in key_cycles:
+        if cycle_count == number:
+            crt_pos = 0
+            print(' ')
+
+    # Evaluate what we should print based on the position of register x
+    if crt_pos == register_x or crt_pos == register_x - 1 or crt_pos == register_x + 1:
+        print('#', end='')
+    else:
+        print('.', end='')
+
+    return crt_pos, cycle_count
+
 def cathode_ray_tube():
     '''
-    Day 10
+    Day 10 - there are cycle instructions, use it to count some numbers in the first part and print letters in the
+    second.
     '''
+
+    cycle_instructions = os.getcwd() + '\input_day10.txt'
+    lines = text_file_to_lines(cycle_instructions)
+
+    cycle_count = 0
+    register_x = 1
+    key_cycles = [20, 60, 100, 140, 180, 220]
+    signal_strengths = []
+
+    for index in range(len(lines)):
+
+        line = lines[index]
+
+        if line.find('noop') != -1:
+            cycle_count += 1
+            signal_strengths = check_register_x(register_x, cycle_count, key_cycles, signal_strengths)
+        elif line.find('addx') != -1:
+            num_to_add = int(line.split(' ')[-1])
+
+            cycle_count += 1
+            signal_strengths = check_register_x(register_x, cycle_count, key_cycles, signal_strengths)
+            cycle_count += 1
+            signal_strengths = check_register_x(register_x, cycle_count, key_cycles, signal_strengths)
+            register_x += num_to_add
+
+    print(signal_strengths)
+    print(sum(signal_strengths))
+
+    # PART 2
+
+    register_x = 1
+    key_cycles = [1, 41, 81, 121, 161, 201]
+    cycle_count = 0
+    crt_pos = 0
+
+    # Evaluate all the lines in the file to print the correct stuff.
+    for index_2 in range(len(lines)):
+        line = lines[index_2]
+
+        if line.find('noop') != -1:
+            crt_pos, cycle_count = new_cycle(crt_pos, cycle_count, register_x, key_cycles)
+        if line.find('addx') != -1:
+            num_to_add = int(line.split(' ')[-1])
+            crt_pos, cycle_count = new_cycle(crt_pos, cycle_count, register_x, key_cycles)
+            crt_pos, cycle_count = new_cycle(crt_pos, cycle_count, register_x, key_cycles)
+            register_x += num_to_add
+
+def monkey_in_the_middle():
+
+    cycle_instructions = os.getcwd() + '\input_day11.txt'
+    lines = text_file_to_lines(cycle_instructions)
+
+monkey_in_the_middle()
